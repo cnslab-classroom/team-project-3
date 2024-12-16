@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">DailyHelper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_diary">Hello Diary!</string>
+    <string name="hello_preset">Hello Preset!</string>
+    <string name="home_name">"<b>"김민준"</b>" 님!</string>
+    <string name="selete_date">일정을 추가할 날짜를 선택해주세요.</string>
+    <string name="home_date">오늘은 <b> 9월 19일 </b> 입니다! \n오늘의 일정 테마는 <b> \"건강\" </b> 입니다.</string>
+    <string name="snackbar_date_text_label">날짜를 선택해주세요!</string>
+    <string name="snackbar_preset_text_label">프리셋을 선택해주세요!</string>
+    <string name="snackbar_start_time_text_label">시작 시간을 선택해주세요!</string>
+    <string name="snackbar_end_time_text_label">끝 시간을 선택해주세요!</string>
+    <string name="snackbar_complete_label">일정이 저장되었습니다! </string>
+    <string name="snackbar_saved_label">프리셋이 저장되었습니다! </string>
+
+    <string-array name="custom_weekdays">
+        <item>일</item>
+        <item>월</item>
+        <item>화</item>
+        <item>수</item>
+        <item>목</item>
+        <item>금</item>
+        <item>토</item>
+    </string-array>
+
+    <string-array name="custom_months">
+        <item>1월</item>
+        <item>2월</item>
+        <item>3월</item>
+        <item>4월</item>
+        <item>5월</item>
+        <item>6월</item>
+        <item>7월</item>
+        <item>8월</item>
+        <item>9월</item>
+        <item>10월</item>
+        <item>11월</item>
+        <item>12월</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="select_preset_text">해당 일에 수행할 프리셋을 골라주세요.</string>
+    <string name="health_chip">건강</string>
+    <string name="friend_chip">친목</string>
+    <string name="work_chip"> 일 </string>
+    <string name="etc_chip">기타</string>
+    <string name="gobackactivity">GoBackActivity</string>
+    <string name="datepickup">DatePickUp</string>
+    <string name="ok_btn">OK</string>
+    <string name="select_duration_text">시작과 끝 시간을 설정해주세요.</string>
+    <string name="start_label">시작 시간</string>
+    <string name="end_label">끝날 시간</string>
+    <string name="preset_menu_text">프리셋</string>
+    <string name="make_preset_text">프리셋 만들기</string>
+</resources>
