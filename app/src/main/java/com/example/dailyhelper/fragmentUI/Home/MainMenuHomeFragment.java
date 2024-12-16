@@ -26,6 +26,7 @@ import com.example.dailyhelper.MainActivity;
 import com.example.dailyhelper.R;
 import com.example.dailyhelper.dao.TodoDAO;
 import com.example.dailyhelper.database.TodoDatabase;
+import com.example.dailyhelper.dto.CategoryCount;
 import com.example.dailyhelper.dto.Todo;
 import com.example.dailyhelper.fragmentUI.Home.todo.SelectDate;
 import com.example.dailyhelper.utils.CustomApplication;
@@ -47,7 +48,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +66,7 @@ public class MainMenuHomeFragment extends Fragment {
     private ArrayList<CalendarDay> HealthDayList = new ArrayList<>();
     private ArrayList<CalendarDay> FriendDayList = new ArrayList<>();
     private ArrayList<CalendarDay> WorkDayList = new ArrayList<>();
+    String main_category = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,8 +93,26 @@ public class MainMenuHomeFragment extends Fragment {
 
         int start, end;
 
+        app.getSingleThreadExecutor().execute(() -> {
+            TodoDAO todoDao = todoDB.todoDAO();
+            CategoryCount mostFrequentCategory = todoDao.getMostFrequentCategory();
 
-        String daily_theme_text = "오늘은 "+ month + "월 " + day + "일 입니다! \n오늘의 일정 테마는 \"건강\" 입니다.";
+            // 메인 스레드에서 UI 업데이트
+            requireActivity().runOnUiThread(() -> {
+                if (mostFrequentCategory != null) {
+                    Log.d("MostCategory", "Category: " + mostFrequentCategory.category +
+                            ", Count: " + mostFrequentCategory.count);
+                    main_category = mostFrequentCategory.category;
+                } else {
+                    Log.d("MostCategory", "No data found");
+                    main_category = "균형";
+                }
+            });
+            Log.d("DB", "run: Successfully updated Todo list");
+        });
+
+
+        String daily_theme_text = "오늘은 "+ month + "월 " + day + "일 입니다! \n오늘의 일정 테마는 \"" + main_category + "\" 입니다.";
         SpannableString text = new SpannableString(daily_theme_text);
 
         //month bold체 전환
@@ -141,49 +163,35 @@ public class MainMenuHomeFragment extends Fragment {
             }
         });
 
-        Thread t = readTodoThread(year, month, day, requireActivity());
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        /*
+        * Read calender Event from DB
+        */
+
+        app.getSingleThreadExecutor().execute(() -> {
+            TodoDAO todoDao = todoDB.todoDAO();
+            List<Todo> todo = todoDao.findDatesTodo(year + "-%"); //yyyy-MM-dd
+            Log.d("DB", "run: Successfully read from DB");
+
+            try {
+                monthRangeTodoList(todo);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            calendarView.setSelectedDate(CalendarDay.today());
+
+            calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(242, 95, 57), HealthDayList, getActivity()));
+            calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(138, 78, 255), FriendDayList, getActivity()));
+            calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(1, 170, 251), WorkDayList, getActivity()));
+
+            Log.d("DB", "run: Completed to decorate");
+            todo = todoDao.findDatesTodo(
+                    year + "-" + month + "-" + day
+            );
+            updateTodoList(todo, getActivity());
+        });
 
         return view;
-    }
-
-    @NonNull
-    public Thread readTodoThread(String year, String month, String day, Activity context) {
-        class ReadRunnable implements Runnable {
-            @Override
-            public void run() {
-                TodoDAO todoDao = todoDB.todoDAO();
-                List<Todo> todo = todoDao.findDatesTodo(year + "-%"); //yyyy-MM-dd
-                Log.d("DB", "run: Successfully read from DB");
-
-                try {
-                    monthRangeTodoList(todo);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-
-                calendarView.setSelectedDate(CalendarDay.today());
-
-                calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(242, 95, 57), HealthDayList, context));
-                calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(138, 78, 255), FriendDayList, context));
-                calendarView.addDecorators(new HomeCalenderDecorator(Color.rgb(1, 170, 251), WorkDayList, context));
-
-                Log.d("DB", "run: Completed to decorate");
-                todo = todoDao.findDatesTodo(
-                        year + "-" + month + "-" + day
-                );
-                updateTodoList(todo, context);
-            }
-        }
-
-        ReadRunnable readRunnable = new ReadRunnable();
-        Thread t = new Thread(readRunnable);
-        return t;
     }
 
     private void monthRangeTodoList(List<Todo> todo) throws ParseException {
