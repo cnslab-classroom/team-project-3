@@ -22,6 +22,7 @@ import com.example.dailyhelper.R;
 import com.example.dailyhelper.dao.PresetDAO;
 import com.example.dailyhelper.database.PresetDatabase;
 import com.example.dailyhelper.dto.Preset;
+import com.example.dailyhelper.utils.CustomApplication;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -58,9 +59,10 @@ public class MainMenuPresetFragment extends Fragment {
         presetWarp = (ScrollView) view.findViewById(R.id.presetView);
 
         presetDB = PresetDatabase.getInstance(getContext());
+        CustomApplication app = (CustomApplication) requireActivity().getApplication();
 
         healthChip.setChecked(true); //initialize
-        Executors.newSingleThreadExecutor().execute(() -> {
+        app.getSingleThreadExecutor().execute(() -> {
             PresetDAO presetDAO = presetDB.presetDAO();
             List<Preset> presetList = presetDAO.findTodoFromCategory("건강");
 
@@ -76,7 +78,7 @@ public class MainMenuPresetFragment extends Fragment {
                 workChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("건강");
 
@@ -94,7 +96,7 @@ public class MainMenuPresetFragment extends Fragment {
                 workChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("친목");
 
@@ -112,7 +114,7 @@ public class MainMenuPresetFragment extends Fragment {
                 healthChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("일");
 
@@ -130,7 +132,7 @@ public class MainMenuPresetFragment extends Fragment {
                 workChip.setChecked(false);
                 healthChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("기타");
 

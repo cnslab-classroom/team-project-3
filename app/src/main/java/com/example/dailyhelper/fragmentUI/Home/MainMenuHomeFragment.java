@@ -28,6 +28,7 @@ import com.example.dailyhelper.dao.TodoDAO;
 import com.example.dailyhelper.database.TodoDatabase;
 import com.example.dailyhelper.dto.Todo;
 import com.example.dailyhelper.fragmentUI.Home.todo.SelectDate;
+import com.example.dailyhelper.utils.CustomApplication;
 import com.example.dailyhelper.utils.DateFormat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -80,12 +81,15 @@ public class MainMenuHomeFragment extends Fragment {
         fab = (FloatingActionButton) view.findViewById(R.id.floating_action_button);
 
         todoDB = TodoDatabase.getInstance(getContext());
+        CustomApplication app = (CustomApplication) requireActivity().getApplication();
 
         String year = DateFormat.make_yyyy();
         String month = DateFormat.make_MM();
         String day = DateFormat.make_dd();
 
         int start, end;
+
+
         String daily_theme_text = "오늘은 "+ month + "월 " + day + "일 입니다! \n오늘의 일정 테마는 \"건강\" 입니다.";
         SpannableString text = new SpannableString(daily_theme_text);
 
@@ -115,7 +119,7 @@ public class MainMenuHomeFragment extends Fragment {
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     TodoDAO todoDao = todoDB.todoDAO();
                     List<Todo> todos = todoDao.findDatesTodo(
                             date.getYear() + "-" + date.getMonth() + "-" + date.getDay()

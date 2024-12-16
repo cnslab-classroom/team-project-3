@@ -31,6 +31,7 @@ import com.example.dailyhelper.dao.PresetDAO;
 import com.example.dailyhelper.database.PresetDatabase;
 import com.example.dailyhelper.database.TodoDatabase;
 import com.example.dailyhelper.dto.Preset;
+import com.example.dailyhelper.utils.CustomApplication;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -54,6 +55,7 @@ public class SelectPreset extends AppCompatActivity {
         setContentView(R.layout.activity_select_preset);
 
         presetDB = PresetDatabase.getInstance(this);
+        CustomApplication app = (CustomApplication) this.getApplication();
 
         Chip healthChip = (Chip) findViewById(R.id.health_chip);
         Chip friendChip = (Chip) findViewById(R.id.friend_chip);
@@ -74,7 +76,7 @@ public class SelectPreset extends AppCompatActivity {
                 workChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("건강");
 
@@ -92,7 +94,7 @@ public class SelectPreset extends AppCompatActivity {
                 workChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("친목");
 
@@ -110,7 +112,7 @@ public class SelectPreset extends AppCompatActivity {
                 healthChip.setChecked(false);
                 etcChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("일");
 
@@ -128,7 +130,7 @@ public class SelectPreset extends AppCompatActivity {
                 workChip.setChecked(false);
                 healthChip.setChecked(false);
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     PresetDAO presetDAO = presetDB.presetDAO();
                     List<Preset> presetList = presetDAO.findTodoFromCategory("기타");
 
@@ -151,7 +153,7 @@ public class SelectPreset extends AppCompatActivity {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(rdoGroup.getCheckedRadioButtonId() == -1){
+                if (rdoGroup.getCheckedRadioButtonId() == -1) {
                     Snackbar.make(presetSelectView, R.string.snackbar_preset_text_label, Snackbar.LENGTH_LONG).show();
                     return;
                 }
@@ -166,10 +168,10 @@ public class SelectPreset extends AppCompatActivity {
                 intent.putExtra("title", lines[0]);
                 intent.putExtra("content", lines[1]);
 
-                if(healthChip.isChecked()) category = "건강";
-                else if(friendChip.isChecked()) category = "친목";
-                else if(workChip.isChecked()) category = "일";
-                else if(etcChip.isChecked()) category = "기타";
+                if (healthChip.isChecked()) category = "건강";
+                else if (friendChip.isChecked()) category = "친목";
+                else if (workChip.isChecked()) category = "일";
+                else if (etcChip.isChecked()) category = "기타";
 
                 intent.putExtra("category", category);
                 Log.d("Intent", "Extra: (todo) title: " + lines[0] + " content: " + lines[1]);
@@ -182,7 +184,7 @@ public class SelectPreset extends AppCompatActivity {
 
         // initialize
         healthChip.setChecked(true);
-        Executors.newSingleThreadExecutor().execute(() -> {
+        app.getSingleThreadExecutor().execute(() -> {
             PresetDAO presetDAO = presetDB.presetDAO();
             List<Preset> presetList = presetDAO.findTodoFromCategory("건강");
             Log.d("DB", "run: Read from DB: " + presetList.toString());

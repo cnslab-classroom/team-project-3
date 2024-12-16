@@ -17,6 +17,7 @@ import com.example.dailyhelper.R;
 import com.example.dailyhelper.dao.TodoDAO;
 import com.example.dailyhelper.database.TodoDatabase;
 import com.example.dailyhelper.dto.Todo;
+import com.example.dailyhelper.utils.CustomApplication;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.concurrent.Executors;
 
@@ -47,6 +48,7 @@ public class SelectDuration extends AppCompatActivity {
         String getCategory = getIntent().getStringExtra("category");
 
         TodoDatabase todoDB = TodoDatabase.getInstance(this);
+        CustomApplication app = (CustomApplication) this.getApplication();
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +85,7 @@ public class SelectDuration extends AppCompatActivity {
                 todo.startTime = startTime;
                 todo.endTime = endTime;
 
-                Executors.newSingleThreadExecutor().execute(() -> {
+                app.getSingleThreadExecutor().execute(() -> {
                     TodoDAO todoDao = todoDB.todoDAO();
                     todoDao.insertTodo(todo);
                     Log.d("DB", "run: Successfully created Todo list");
